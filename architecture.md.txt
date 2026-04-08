@@ -1,0 +1,33 @@
+# Architecture & Technical Design: Finance Manager
+
+## 1. Technologický stack
+* **Framework:** Next.js (App Router).
+* **Jazyk:** TypeScript.
+* **Styling:** Tailwind CSS.
+* **UI Komponenty:** shadcn/ui (včetně Data Table postavené na @tanstack/react-table pro pokročilé filtrování a stránkování).
+* **Ikony:** Lucide React.
+* **State Management:** React Context API + `localStorage`.
+
+## 2. Architektura projektu (Struktura složek)
+```text
+src/
+├── app/
+│   ├── (auth)/login/page.tsx
+│   ├── (dashboard)/
+│   │   ├── layout.tsx           # Hlavní layout s navigací
+│   │   ├── page.tsx             # Hlavní přehled (Dashboard se součty)
+│   │   ├── monthly/page.tsx     # Měsíční výdaje (Tabulka + Součty)
+│   │   ├── education/page.tsx   # Výdaje za vzdělávání (Tabulka + Součty)
+│   │   ├── income/page.tsx      # Příjmy (Tabulka s filtry Rok/Měsíc/Klient)
+│   │   └── investments/page.tsx # Investice (Tabulka + Součty)
+├── components/
+│   ├── ui/                      # Sdílené UI (tlačítka, inputy)
+│   ├── data-table/              # Komponenty pro interaktivní tabulky (TanStack)
+│   ├── forms/                   # Formuláře pro přidávání záznamů
+│   ├── widgets/                 # Karty se součty (Summary cards)
+│   └── layout/                  # Navigace
+├── lib/
+│   ├── store.tsx                # Context API a LocalStorage logika
+│   └── utils.ts                 # Pomocné funkce (např. formátování měny a data)
+└── types/
+    └── index.ts                 # TypeScript modely

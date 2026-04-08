@@ -1,0 +1,45 @@
+# Product Requirements Document (PRD): Finance Manager
+
+## 1. O projektu
+Cílem je vytvořit moderní webovou aplikaci "Finance Manager" pro osobní správu financí. Aplikace klade důraz na špičkové UX/UI, přehlednou vizualizaci dat v tabulkách a snadné zadávání. Aplikace běží primárně na straně klienta, nevyužívá externí databázi (data se ukládají lokálně).
+
+## 2. Klíčové funkce (Epic & User Stories)
+
+### 2.1 Autentizace (Přihlášení)
+* **Požadavek:** Uživatel se musí moci přihlásit do aplikace.
+* **Specifikace:** Implementujte "mock" přihlášení. Neautorizovaný uživatel vidí pouze login screen.
+
+### 2.2 Hlavní Dashboard (Souhrn)
+* **Zobrazení:** Hlavní nástěnka sumarizující celkový stav financí.
+* **Funkce:** Celkové součty (Příjmy vs. Výdaje, Celkové investice). Možnost globálního filtrování podle typu výdajů a příjmů napříč celou aplikací.
+
+### 2.3 Měsíční výdaje
+* **Zobrazení:** * Souhrnný widget (celková částka za vybrané období).
+  * Přehledná interaktivní tabulka (počáteční data z printscreenu).
+* **Filtrování:** Podle typu/kategorie výdaje, časového období.
+* **Akce:** Formulář pro přidání nového výdaje (Název, Částka, Kategorie, Datum).
+
+### 2.4 Vzdělávání (Výdaje)
+* **Zobrazení:** * Souhrnný widget (celková proinvestovaná částka do vzdělání).
+  * Přehledná interaktivní tabulka (počáteční data dle printscreenu).
+* **Filtrování:** Podle typu výdaje (kurz, kniha, atd.), časového období.
+* **Akce:** Formulář pro přidání nového výdaje na vzdělávání (Název, Částka, Typ, Datum).
+
+### 2.5 Příjmy
+* **Zobrazení:** * Souhrnný widget (celkové příjmy).
+  * Přehledná interaktivní tabulka (počáteční data ze souboru).
+* **Filtrování (Pokročilé):** * Podle roku.
+  * Podle měsíce.
+  * Podle klienta.
+  * Podle typu příjmu.
+* **Akce:** Formulář pro zadání dalšího příjmu (Zdroj/Klient, Typ příjmu, Částka, Datum).
+
+### 2.6 Investice
+* **Zobrazení:** * Souhrnný widget (celková zainvestovaná částka).
+  * Přehledná interaktivní tabulka.
+* **Filtrování:** Podle roku, typu investice.
+* **Akce:** Formulář pro přidání nové investice (Rok, Datum, Částka, Popis).
+
+## 3. Nefunkční požadavky
+* **Design:** Moderní, čistý vzhled. Pro zobrazení dat použijte interaktivní tabulky s možností řazení a filtrování (doporučeno TanStack Table v rámci shadcn/ui).
+* **Data:** Perzistence v `localStorage`.
