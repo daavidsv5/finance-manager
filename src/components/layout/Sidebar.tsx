@@ -17,7 +17,7 @@ const navItems = [
   { href: '/dashboard/monthly', label: 'Měsíční výdaje', icon: CreditCard },
   { href: '/dashboard/education', label: 'Vzdělávání', icon: GraduationCap },
   { href: '/dashboard/income', label: 'Příjmy', icon: Wallet },
-  { href: '/dashboard/investments', label: 'Investice', icon: TrendingUp },
+  { href: '/dashboard/investments', label: 'David investice', icon: TrendingUp },
 ];
 
 export function Sidebar() {

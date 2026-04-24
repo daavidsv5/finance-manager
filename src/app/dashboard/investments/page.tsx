@@ -11,12 +11,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const INV_TYPES = ['ETF', 'Akcie', 'Kryptoměny', 'Nemovitosti', 'Dluhopisy', 'Ostatní'];
+const INV_TYPES = ['Etoro', 'XTB', 'ETF', 'Akcie', 'Kryptoměny', 'Nemovitosti', 'Dluhopisy', 'Ostatní'];
 const YEARS = Array.from({ length: 8 }, (_, i) => 2020 + i);
 
 const TYPE_STYLE: Record<string, string> = {
+  Etoro:        'bg-teal-50 text-teal-700 ring-teal-200',
+  XTB:          'bg-blue-50 text-blue-700 ring-blue-200',
   ETF:          'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  Akcie:        'bg-blue-50 text-blue-700 ring-blue-200',
+  Akcie:        'bg-indigo-50 text-indigo-700 ring-indigo-200',
   Kryptoměny:   'bg-orange-50 text-orange-700 ring-orange-200',
   Nemovitosti:  'bg-amber-50 text-amber-700 ring-amber-200',
   Dluhopisy:    'bg-violet-50 text-violet-700 ring-violet-200',
@@ -68,7 +70,7 @@ export default function InvestmentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[13px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Finance</p>
-          <h1 className="text-[28px] font-bold text-[#0f1d3a]">Investice</h1>
+          <h1 className="text-[28px] font-bold text-[#0f1d3a]">David investice</h1>
         </div>
         <Button onClick={() => setOpen(true)} className="h-10 px-5 text-[15px] font-semibold rounded-xl shadow-md" style={{ background: '#2563eb' }}>
           <Plus className="h-4 w-4 mr-2" /> Přidat investici
@@ -113,7 +115,7 @@ export default function InvestmentsPage() {
             <table className="w-full">
               <thead>
                 <tr style={{ background: '#152347' }}>
-                  {[['year','Rok',false],['date','Datum',false],['type','Typ',false],['description','Popis',false],['amount','Částka',true]].map(([k,lbl,r]) => (
+                  {[['year','Rok',false],['date','Datum',false],['type','Broker',false],['amount','Částka',true]].map(([k,lbl,r]) => (
                     <th key={k as string} className={`px-6 py-3.5 text-[12px] font-bold uppercase tracking-widest text-white/70 ${r ? 'text-right' : 'text-left'}`}>
                       <button className={`inline-flex items-center hover:text-white transition-colors ${r ? 'ml-auto' : ''}`} onClick={() => toggleSort(k as string)}>
                         {lbl as string}<SortIcon k={k as string} />
@@ -131,7 +133,6 @@ export default function InvestmentsPage() {
                     <td className="px-6 py-3.5">
                       <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[12px] font-bold ring-1 ring-inset ${TYPE_STYLE[inv.type] ?? 'bg-slate-100 text-slate-600 ring-slate-200'}`}>{inv.type}</span>
                     </td>
-                    <td className="px-6 py-3.5 text-[15px] font-semibold text-[#0f1d3a]">{inv.description}</td>
                     <td className="px-6 py-3.5 text-right text-[15px] font-bold tabular-nums text-[#0f1d3a]">{formatCzk(inv.amount)}</td>
                     <td className="px-6 py-3.5 text-right">
                       <button onClick={() => deleteInvestment(inv.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
@@ -143,7 +144,7 @@ export default function InvestmentsPage() {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-[#dde5f4] bg-[#f4f7fc]">
-                  <td colSpan={4} className="px-6 py-4 text-[14px] font-bold text-slate-500 uppercase tracking-wide">Celkem</td>
+                  <td colSpan={3} className="px-6 py-4 text-[14px] font-bold text-slate-500 uppercase tracking-wide">Celkem</td>
                   <td className="px-6 py-4 text-right text-[18px] font-bold tabular-nums text-[#0f1d3a]">{formatCzk(total)}</td>
                   <td />
                 </tr>
@@ -166,7 +167,7 @@ export default function InvestmentsPage() {
               </div>
               <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Datum</Label><Input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="h-10 text-[15px]" required /></div>
             </div>
-            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Typ investice</Label>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Broker</Label>
               <Select value={form.type} onValueChange={v => setForm(f => ({ ...f, type: v ?? f.type }))}>
                 <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
                 <SelectContent>{INV_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>

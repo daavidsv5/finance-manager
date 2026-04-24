@@ -339,4 +339,39 @@ export const initialIncomes: Income[] = rawIncomes.map((row, i) => {
   };
 });
 
-export const initialInvestments: Investment[] = [];
+export const initialInvestments: Investment[] = [
+  // 2024 – Etoro
+  { id: 'inv-1',  year: 2024, date: '2024-04-02',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-2',  year: 2024, date: '2024-04-27',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-3',  year: 2024, date: '2024-05-23',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-4',  year: 2024, date: '2024-06-10',  amount: 11024, description: '', type: 'Etoro' },
+  { id: 'inv-5',  year: 2024, date: '2024-06-27',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-6',  year: 2024, date: '2024-07-29',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-7',  year: 2024, date: '2024-08-26',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-8',  year: 2024, date: '2024-09-28',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-9',  year: 2024, date: '2024-10-16',  amount: 12000, description: '', type: 'Etoro' },
+  { id: 'inv-10', year: 2024, date: '2024-10-29',  amount: 2500,  description: '', type: 'Etoro' },
+  { id: 'inv-11', year: 2024, date: '2024-11-30',  amount: 7000,  description: '', type: 'Etoro' },
+  { id: 'inv-12', year: 2024, date: '2024-12-30',  amount: 27102, description: '', type: 'XTB' },
+  // 2025 – XTB
+  { id: 'inv-13', year: 2025, date: '2025-01-24',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-14', year: 2025, date: '2025-02-22',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-15', year: 2025, date: '2025-03-18',  amount: 25000, description: '', type: 'XTB' },
+  { id: 'inv-16', year: 2025, date: '2025-04-02',  amount: 20000, description: '', type: 'XTB' },
+  { id: 'inv-17', year: 2025, date: '2025-04-21',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-18', year: 2025, date: '2025-05-22',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-19', year: 2025, date: '2025-06-22',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-20', year: 2025, date: '2025-07-14',  amount: 15000, description: '', type: 'XTB' },
+  { id: 'inv-21', year: 2025, date: '2025-07-21',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-22', year: 2025, date: '2025-08-22',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-23', year: 2025, date: '2025-09-04',  amount: 10000, description: '', type: 'XTB' },
+  { id: 'inv-24', year: 2025, date: '2025-09-23',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-25', year: 2025, date: '2025-10-23',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-26', year: 2025, date: '2025-11-23',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-27', year: 2025, date: '2025-12-23',  amount: 8000,  description: '', type: 'XTB' },
+  // 2026 – XTB
+  { id: 'inv-28', year: 2026, date: '2026-01-21',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-29', year: 2026, date: '2026-02-21',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-30', year: 2026, date: '2026-03-21',  amount: 8000,  description: '', type: 'XTB' },
+  { id: 'inv-31', year: 2026, date: '2026-04-07',  amount: 35000, description: '', type: 'XTB' },
+];
