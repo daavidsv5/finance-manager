@@ -186,7 +186,8 @@ export default function IncomePage() {
               barCategoryGap="32%"
               onClick={e => {
                 if (e?.activeLabel) {
-                  setChartYear(prev => prev === e.activeLabel ? 'all' : e.activeLabel!);
+                  const label = String(e.activeLabel);
+                  setChartYear(prev => prev === label ? 'all' : label);
                 }
               }}
             >
