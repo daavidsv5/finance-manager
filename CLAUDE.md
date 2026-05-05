@@ -58,6 +58,7 @@ Vše v `localStorage` pod klíčem `finance_manager_data` jako `AppState`:
 ## Store API (`useStore()`)
 - `addMonthlyExpense / addEducationExpense / addIncome / addInvestment`
 - `deleteMonthlyExpense / deleteEducationExpense / deleteIncome / deleteInvestment`
+- `updateMonthlyExpense(id, Partial<MonthlyExpense>)` — pro editaci existující položky
 - `updateIncome(id, Partial<Income>)` — pro toggle invoiceSent / paid
 
 ## Income page — klíčové detaily

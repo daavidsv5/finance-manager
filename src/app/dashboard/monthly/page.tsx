@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { formatCzk } from '@/lib/format';
 import { SummaryCard } from '@/components/widgets/SummaryCard';
-import { CreditCard, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { CreditCard, Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,12 +24,14 @@ const CAT_STYLE: Record<string, string> = {
 };
 
 export default function MonthlyPage() {
-  const { state, addMonthlyExpense, deleteMonthlyExpense } = useStore();
+  const { state, addMonthlyExpense, deleteMonthlyExpense, updateMonthlyExpense } = useStore();
   const [filter, setFilter] = useState('all');
   const [sortKey, setSortKey] = useState('category');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('asc');
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', category: 'Rodina' as Cat, amount: '', date: new Date().toISOString().split('T')[0] });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', category: 'Rodina' as Cat, amount: '', date: '' });
 
   const filtered = useMemo(() => {
     let d = [...state.monthlyExpenses];
@@ -54,6 +56,18 @@ export default function MonthlyPage() {
   const SortIcon = ({ k }: { k: string }) => sortKey === k
     ? (sortDir === 'asc' ? <ChevronUp className="h-3.5 w-3.5 ml-1 text-white" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 text-white" />)
     : <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-30 text-white" />;
+
+  const openEdit = (expense: { id: string; name: string; category: Cat; amount: number; date: string }) => {
+    setEditId(expense.id);
+    setEditForm({ name: expense.name, category: expense.category, amount: String(expense.amount), date: expense.date });
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    updateMonthlyExpense(editId, { name: editForm.name, category: editForm.category, amount: parseInt(editForm.amount), date: editForm.date });
+    setEditId(null);
+  };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,9 +139,14 @@ export default function MonthlyPage() {
                   </td>
                   <td className="px-6 py-3.5 text-right text-[15px] font-bold tabular-nums text-[#0f1d3a]">{formatCzk(e.amount)}</td>
                   <td className="px-6 py-3.5 text-right">
-                    <button onClick={() => deleteMonthlyExpense(e.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                      <button onClick={() => openEdit(e)} className="text-slate-300 hover:text-blue-500 transition-colors">
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => deleteMonthlyExpense(e.id)} className="text-slate-300 hover:text-red-500 transition-colors">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -142,6 +161,34 @@ export default function MonthlyPage() {
           </table>
         </div>
       </div>
+
+      <Dialog open={editId !== null} onOpenChange={v => { if (!v) setEditId(null); }}>
+        <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">
+          <DialogHeader><DialogTitle className="text-[18px] font-bold text-[#0f1d3a]">Upravit výdaj</DialogTitle></DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label className="text-[14px] font-semibold text-slate-600">Název</Label>
+              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} placeholder="Název výdaje" className="h-10 text-[15px]" required />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[14px] font-semibold text-slate-600">Kategorie</Label>
+              <Select value={editForm.category} onValueChange={v => setEditForm(f => ({ ...f, category: (v ?? f.category) as Cat }))}>
+                <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[14px] font-semibold text-slate-600">Částka (Kč)</Label>
+              <Input type="number" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} placeholder="0" className="h-10 text-[15px]" required />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[14px] font-semibold text-slate-600">Datum</Label>
+              <Input type="date" value={editForm.date} onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))} className="h-10 text-[15px]" required />
+            </div>
+            <Button type="submit" className="w-full h-10 text-[15px] font-bold rounded-xl" style={{ background: '#2563eb' }}>Uložit změny</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">

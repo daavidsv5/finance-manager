@@ -24,6 +24,7 @@ interface StoreContextType {
   deleteIncome: (id: string) => void;
   deleteInvestment: (id: string) => void;
   updateIncome: (id: string, updates: Partial<Omit<Income, 'id'>>) => void;
+  updateMonthlyExpense: (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => void;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -93,6 +94,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setState(prev => ({ ...prev, investments: prev.investments.filter(e => e.id !== id) }));
   };
 
+  const updateMonthlyExpense = (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => {
+    setState(prev => ({
+      ...prev,
+      monthlyExpenses: prev.monthlyExpenses.map(e => e.id === id ? { ...e, ...updates } : e),
+    }));
+  };
+
   const updateIncome = (id: string, updates: Partial<Omit<Income, 'id'>>) => {
     setState(prev => ({
       ...prev,
@@ -112,6 +120,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       deleteIncome,
       deleteInvestment,
       updateIncome,
+      updateMonthlyExpense,
     }}>
       {children}
     </StoreContext.Provider>
