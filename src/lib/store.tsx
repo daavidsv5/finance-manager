@@ -40,7 +40,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        setState(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setState({ ...defaultState, ...parsed });
       }
     } catch {
       // ignore
