@@ -107,43 +107,36 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateMonthlyExpense = (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => {
-    setState(prev => ({
-      ...prev,
-      monthlyExpenses: prev.monthlyExpenses.map(e => e.id === id ? { ...e, ...updates } : e),
-    }));
-    call(`/api/monthly-expenses/${id}`, 'PUT', updates);
+    const full = { ...state.monthlyExpenses.find(e => e.id === id)!, ...updates };
+    setState(prev => ({ ...prev, monthlyExpenses: prev.monthlyExpenses.map(e => e.id === id ? full : e) }));
+    call(`/api/monthly-expenses/${id}`, 'PUT', full);
   };
 
   const updateIncome = (id: string, updates: Partial<Omit<Income, 'id'>>) => {
-    setState(prev => ({
-      ...prev,
-      incomes: prev.incomes.map(inc => inc.id === id ? { ...inc, ...updates } : inc),
-    }));
-    call(`/api/incomes/${id}`, 'PUT', updates);
+    const full = { ...state.incomes.find(e => e.id === id)!, ...updates };
+    setState(prev => ({ ...prev, incomes: prev.incomes.map(e => e.id === id ? full : e) }));
+    call(`/api/incomes/${id}`, 'PUT', full);
   };
 
   const updateEducationExpense = (id: string, updates: Partial<Omit<EducationExpense, 'id'>>) => {
-    setState(prev => ({
-      ...prev,
-      educationExpenses: prev.educationExpenses.map(e => e.id === id ? { ...e, ...updates } : e),
-    }));
-    call(`/api/education-expenses/${id}`, 'PUT', updates);
+    const full = { ...state.educationExpenses.find(e => e.id === id)!, ...updates };
+    setState(prev => ({ ...prev, educationExpenses: prev.educationExpenses.map(e => e.id === id ? full : e) }));
+    call(`/api/education-expenses/${id}`, 'PUT', full);
   };
 
   const updateInvestment = (id: string, updates: Partial<Omit<Investment, 'id'>>) => {
+    const full = { ...state.investments.find(e => e.id === id)!, ...updates };
     setState(prev => ({
       ...prev,
-      investments: prev.investments.map(e => e.id === id ? { ...e, ...updates } : e),
+      investments: prev.investments.map(e => e.id === id ? full : e),
     }));
-    call(`/api/investments/${id}`, 'PUT', updates);
+    call(`/api/investments/${id}`, 'PUT', full);
   };
 
   const updateChildInvestment = (id: string, updates: Partial<Omit<Investment, 'id'>>) => {
-    setState(prev => ({
-      ...prev,
-      childrenInvestments: (prev.childrenInvestments ?? []).map(e => e.id === id ? { ...e, ...updates } : e),
-    }));
-    call(`/api/children-investments/${id}`, 'PUT', updates);
+    const full = { ...(state.childrenInvestments ?? []).find(e => e.id === id)!, ...updates };
+    setState(prev => ({ ...prev, childrenInvestments: (prev.childrenInvestments ?? []).map(e => e.id === id ? full : e) }));
+    call(`/api/children-investments/${id}`, 'PUT', full);
   };
 
   return (
