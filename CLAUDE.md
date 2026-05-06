@@ -15,7 +15,8 @@
 
 ## Deployment
 - **GitHub:** https://github.com/daavidsv5/finance-manager (branch: `main`)
-- **Vercel:** připojit přes vercel.com → Import Git Repository → auto-deploy na každý push
+- **Vercel:** auto-deploy na každý push do `main`
+- **Vercel ENV:** `DATABASE_URL` nastavena v Project Settings → Environment Variables ✓
 
 ## Auth
 - Mock login, credentials: `david@finance.cz` / `David2026!`
