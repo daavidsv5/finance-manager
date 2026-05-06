@@ -73,8 +73,16 @@ Vše v `localStorage` pod klíčem `finance_manager_data` jako `AppState`:
 - Přejmenováno z "Investice" → "David investice" (sidebar + nadpis stránky)
 - Sloupce tabulky: Rok, Datum, Broker, Částka (Popis odstraněn)
 - Broker = pole `type` v Investment modelu; hodnoty: `Etoro`, `XTB` (+ ETF, Akcie…)
-- Seed data: 31 záznamů od dubna 2024 do dubna 2026 (Etoro 2024, XTB od 12/2024)
+- Seed data: 32 záznamů od dubna 2024 do dubna 2026 (Etoro 2024, XTB od 12/2024)
 - Po změně seed dat je nutné smazat `finance_manager_data` z localStorage
+
+## Děti investice — klíčové detaily
+- Stránka: `/dashboard/children-investments` (route), sidebar ikona `Baby`
+- Data uložena v `AppState.childrenInvestments` (oddělené od `investments`)
+- Store API: `addChildInvestment / deleteChildInvestment` (prefix id: `cinv-`)
+- Sloupce tabulky: Rok, Datum, Typ, Částka
+- Typy: `Spoření`, ETF, Akcie, Dluhopisy, Ostatní (výchozí: Spoření)
+- Seed data: 7 záznamů od srpna 2025 do dubna 2026
 
 ## Konvence
 - Vše česky
