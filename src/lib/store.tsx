@@ -14,6 +14,7 @@ const defaultState: AppState = {
 
 interface StoreContextType {
   state: AppState;
+  dbLoaded: boolean;
   addMonthlyExpense: (expense: Omit<MonthlyExpense, 'id'>) => void;
   addEducationExpense: (expense: Omit<EducationExpense, 'id'>) => void;
   addIncome: (income: Omit<Income, 'id'>) => void;
@@ -43,12 +44,13 @@ const call = (path: string, method: string, body?: unknown) => {
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
+  const [dbLoaded, setDbLoaded] = useState(false);
 
   useEffect(() => {
     fetch('/api/data')
       .then(r => r.json())
-      .then(data => setState(data))
-      .catch(() => {});
+      .then(data => { setState(data); setDbLoaded(true); })
+      .catch(() => setDbLoaded(true));
   }, []);
 
   const addMonthlyExpense = (expense: Omit<MonthlyExpense, 'id'>) => {
@@ -142,6 +144,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={{
       state,
+      dbLoaded,
       addMonthlyExpense,
       addEducationExpense,
       addIncome,
