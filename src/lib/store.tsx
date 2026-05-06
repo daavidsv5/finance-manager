@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AppState, MonthlyExpense, EducationExpense, Income, Investment } from '@/types';
-import { initialMonthlyExpenses, initialEducationExpenses, initialIncomes, initialInvestments } from './initialData';
+import { initialMonthlyExpenses, initialEducationExpenses, initialIncomes, initialInvestments, initialChildrenInvestments } from './initialData';
 
 const STORAGE_KEY = 'finance_manager_data';
 
@@ -11,6 +11,7 @@ const defaultState: AppState = {
   educationExpenses: initialEducationExpenses,
   incomes: initialIncomes,
   investments: initialInvestments,
+  childrenInvestments: initialChildrenInvestments,
 };
 
 interface StoreContextType {
@@ -19,10 +20,12 @@ interface StoreContextType {
   addEducationExpense: (expense: Omit<EducationExpense, 'id'>) => void;
   addIncome: (income: Omit<Income, 'id'>) => void;
   addInvestment: (investment: Omit<Investment, 'id'>) => void;
+  addChildInvestment: (investment: Omit<Investment, 'id'>) => void;
   deleteMonthlyExpense: (id: string) => void;
   deleteEducationExpense: (id: string) => void;
   deleteIncome: (id: string) => void;
   deleteInvestment: (id: string) => void;
+  deleteChildInvestment: (id: string) => void;
   updateIncome: (id: string, updates: Partial<Omit<Income, 'id'>>) => void;
   updateMonthlyExpense: (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => void;
 }
@@ -94,6 +97,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setState(prev => ({ ...prev, investments: prev.investments.filter(e => e.id !== id) }));
   };
 
+  const addChildInvestment = (investment: Omit<Investment, 'id'>) => {
+    setState(prev => ({
+      ...prev,
+      childrenInvestments: [...(prev.childrenInvestments ?? []), { ...investment, id: `cinv-${Date.now()}` }],
+    }));
+  };
+
+  const deleteChildInvestment = (id: string) => {
+    setState(prev => ({ ...prev, childrenInvestments: (prev.childrenInvestments ?? []).filter(e => e.id !== id) }));
+  };
+
   const updateMonthlyExpense = (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => {
     setState(prev => ({
       ...prev,
@@ -115,10 +129,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addEducationExpense,
       addIncome,
       addInvestment,
+      addChildInvestment,
       deleteMonthlyExpense,
       deleteEducationExpense,
       deleteIncome,
       deleteInvestment,
+      deleteChildInvestment,
       updateIncome,
       updateMonthlyExpense,
     }}>

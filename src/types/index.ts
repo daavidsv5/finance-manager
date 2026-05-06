@@ -46,4 +46,5 @@ export interface AppState {
   educationExpenses: EducationExpense[];
   incomes: Income[];
   investments: Investment[];
+  childrenInvestments: Investment[];
 }

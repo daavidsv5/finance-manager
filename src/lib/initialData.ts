@@ -374,4 +374,15 @@ export const initialInvestments: Investment[] = [
   { id: 'inv-29', year: 2026, date: '2026-02-21',  amount: 8000,  description: '', type: 'XTB' },
   { id: 'inv-30', year: 2026, date: '2026-03-21',  amount: 8000,  description: '', type: 'XTB' },
   { id: 'inv-31', year: 2026, date: '2026-04-07',  amount: 35000, description: '', type: 'XTB' },
+  { id: 'inv-32', year: 2026, date: '2026-04-21',  amount: 8000,  description: '', type: 'XTB' },
+];
+
+export const initialChildrenInvestments: Investment[] = [
+  { id: 'cinv-1', year: 2025, date: '2025-08-27', amount: 150000, description: '', type: 'Spoření' },
+  { id: 'cinv-2', year: 2025, date: '2025-09-06', amount: 40000,  description: '', type: 'Spoření' },
+  { id: 'cinv-3', year: 2025, date: '2025-12-21', amount: 40000,  description: '', type: 'Spoření' },
+  { id: 'cinv-4', year: 2026, date: '2026-01-21', amount: 36500,  description: '', type: 'Spoření' },
+  { id: 'cinv-5', year: 2026, date: '2026-02-19', amount: 35000,  description: '', type: 'Spoření' },
+  { id: 'cinv-6', year: 2026, date: '2026-03-22', amount: 38500,  description: '', type: 'Spoření' },
+  { id: 'cinv-7', year: 2026, date: '2026-04-22', amount: 40000,  description: '', type: 'Spoření' },
 ];

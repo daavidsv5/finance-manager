@@ -11,6 +11,7 @@ import {
   Wallet,
   LogOut,
   BarChart3,
+  Baby,
 } from 'lucide-react';
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
   { href: '/dashboard/education', label: 'Vzdělávání', icon: GraduationCap },
   { href: '/dashboard/income', label: 'Příjmy', icon: Wallet },
   { href: '/dashboard/investments', label: 'David investice', icon: TrendingUp },
+  { href: '/dashboard/children-investments', label: 'Děti investice', icon: Baby },
 ];
 
 export function Sidebar() {
