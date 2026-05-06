@@ -21,6 +21,9 @@ interface StoreContextType {
   addIncome: (income: Omit<Income, 'id'>) => void;
   addInvestment: (investment: Omit<Investment, 'id'>) => void;
   addChildInvestment: (investment: Omit<Investment, 'id'>) => void;
+  updateEducationExpense: (id: string, updates: Partial<Omit<EducationExpense, 'id'>>) => void;
+  updateInvestment: (id: string, updates: Partial<Omit<Investment, 'id'>>) => void;
+  updateChildInvestment: (id: string, updates: Partial<Omit<Investment, 'id'>>) => void;
   deleteMonthlyExpense: (id: string) => void;
   deleteEducationExpense: (id: string) => void;
   deleteIncome: (id: string) => void;
@@ -109,6 +112,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setState(prev => ({ ...prev, childrenInvestments: (prev.childrenInvestments ?? []).filter(e => e.id !== id) }));
   };
 
+  const updateEducationExpense = (id: string, updates: Partial<Omit<EducationExpense, 'id'>>) => {
+    setState(prev => ({
+      ...prev,
+      educationExpenses: prev.educationExpenses.map(e => e.id === id ? { ...e, ...updates } : e),
+    }));
+  };
+
+  const updateInvestment = (id: string, updates: Partial<Omit<Investment, 'id'>>) => {
+    setState(prev => ({
+      ...prev,
+      investments: prev.investments.map(e => e.id === id ? { ...e, ...updates } : e),
+    }));
+  };
+
+  const updateChildInvestment = (id: string, updates: Partial<Omit<Investment, 'id'>>) => {
+    setState(prev => ({
+      ...prev,
+      childrenInvestments: (prev.childrenInvestments ?? []).map(e => e.id === id ? { ...e, ...updates } : e),
+    }));
+  };
+
   const updateMonthlyExpense = (id: string, updates: Partial<Omit<MonthlyExpense, 'id'>>) => {
     setState(prev => ({
       ...prev,
@@ -131,6 +155,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addIncome,
       addInvestment,
       addChildInvestment,
+      updateEducationExpense,
+      updateInvestment,
+      updateChildInvestment,
       deleteMonthlyExpense,
       deleteEducationExpense,
       deleteIncome,

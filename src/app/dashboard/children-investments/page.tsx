@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { formatCzk, formatDate } from '@/lib/format';
 import { SummaryCard } from '@/components/widgets/SummaryCard';
-import { TrendingUp, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { TrendingUp, Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,7 +23,7 @@ const TYPE_STYLE: Record<string, string> = {
 };
 
 export default function ChildrenInvestmentsPage() {
-  const { state, addChildInvestment, deleteChildInvestment } = useStore();
+  const { state, addChildInvestment, deleteChildInvestment, updateChildInvestment } = useStore();
   const investments = state.childrenInvestments ?? [];
 
   const [fYear, setFYear] = useState('all');
@@ -32,6 +32,8 @@ export default function ChildrenInvestmentsPage() {
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc');
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ year: new Date().getFullYear(), date: new Date().toISOString().split('T')[0], amount: '', description: '', type: 'Spoření' });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ year: new Date().getFullYear(), date: new Date().toISOString().split('T')[0], amount: '', type: 'Spoření' });
 
   const filtered = useMemo(() => {
     let d = [...investments];
@@ -56,6 +58,18 @@ export default function ChildrenInvestmentsPage() {
   const SortIcon = ({ k }: { k: string }) => sortKey === k
     ? (sortDir === 'asc' ? <ChevronUp className="h-3.5 w-3.5 ml-1 text-white" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 text-white" />)
     : <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-30 text-white" />;
+
+  const openEdit = (inv: { id: string; year: number; date: string; amount: number; type: string }) => {
+    setEditId(inv.id);
+    setEditForm({ year: inv.year, date: inv.date, amount: String(inv.amount), type: inv.type });
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    updateChildInvestment(editId, { year: editForm.year, date: editForm.date, amount: parseInt(editForm.amount), type: editForm.type });
+    setEditId(null);
+  };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,9 +148,14 @@ export default function ChildrenInvestmentsPage() {
                     </td>
                     <td className="px-6 py-3.5 text-right text-[15px] font-bold tabular-nums text-[#0f1d3a]">{formatCzk(inv.amount)}</td>
                     <td className="px-6 py-3.5 text-right">
-                      <button onClick={() => deleteChildInvestment(inv.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onClick={() => openEdit(inv)} className="text-slate-300 hover:text-blue-500 transition-colors">
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => deleteChildInvestment(inv.id)} className="text-slate-300 hover:text-red-500 transition-colors">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -152,6 +171,31 @@ export default function ChildrenInvestmentsPage() {
           </div>
         )}
       </div>
+
+      <Dialog open={editId !== null} onOpenChange={v => { if (!v) setEditId(null); }}>
+        <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">
+          <DialogHeader><DialogTitle className="text-[18px] font-bold text-[#0f1d3a]">Upravit investici</DialogTitle></DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Rok</Label>
+                <Select value={String(editForm.year)} onValueChange={v => setEditForm(f => ({ ...f, year: parseInt(v ?? String(f.year)) }))}>
+                  <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>{YEARS.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Datum</Label><Input type="date" value={editForm.date} onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Typ</Label>
+              <Select value={editForm.type} onValueChange={v => setEditForm(f => ({ ...f, type: v ?? f.type }))}>
+                <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                <SelectContent>{INV_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Částka (Kč)</Label><Input type="number" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            <Button type="submit" className="w-full h-10 text-[15px] font-bold rounded-xl" style={{ background: '#2563eb' }}>Uložit změny</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">

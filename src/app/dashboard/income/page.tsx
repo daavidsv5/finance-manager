@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { formatCzk } from '@/lib/format';
 import { SummaryCard } from '@/components/widgets/SummaryCard';
-import { Wallet, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Wallet, Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,6 +72,9 @@ export default function IncomePage() {
     paid: false,
   });
 
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ year: new Date().getFullYear(), month: 'Leden', client: '', amount: '', type: 'Příjem', invoiceSent: false, paid: false });
+
   const [chartYear, setChartYear] = useState(String(new Date().getFullYear()));
 
   const clients = useMemo(() => Array.from(new Set(state.incomes.map(i => i.client))).sort(), [state.incomes]);
@@ -135,6 +138,18 @@ export default function IncomePage() {
   const SortIcon = ({ k }: { k: string }) => sortKey === k
     ? (sortDir === 'asc' ? <ChevronUp className="h-3.5 w-3.5 ml-1 text-white" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 text-white" />)
     : <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-30 text-white" />;
+
+  const openEdit = (inc: { id: string; year: number; month: string; client: string; amount: number; type: string; invoiceSent?: boolean; paid?: boolean }) => {
+    setEditId(inc.id);
+    setEditForm({ year: inc.year, month: inc.month, client: inc.client, amount: String(inc.amount), type: inc.type, invoiceSent: !!inc.invoiceSent, paid: !!inc.paid });
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    updateIncome(editId, { year: editForm.year, month: editForm.month, client: editForm.client, amount: parseInt(editForm.amount), type: editForm.type as 'Příjem'|'Výdej', invoiceSent: editForm.invoiceSent, paid: editForm.paid });
+    setEditId(null);
+  };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -311,9 +326,14 @@ export default function IncomePage() {
                       : <span className="text-slate-200">—</span>}
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <button onClick={() => deleteIncome(inc.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                      <button onClick={() => openEdit(inc)} className="text-slate-300 hover:text-blue-500 transition-colors">
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => deleteIncome(inc.id)} className="text-slate-300 hover:text-red-500 transition-colors">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -328,6 +348,42 @@ export default function IncomePage() {
           </table>
         </div>
       </div>
+
+      {/* Edit dialog */}
+      <Dialog open={editId !== null} onOpenChange={v => { if (!v) setEditId(null); }}>
+        <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">
+          <DialogHeader><DialogTitle className="text-[18px] font-bold text-[#0f1d3a]">Upravit záznam</DialogTitle></DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Rok</Label>
+                <Select value={String(editForm.year)} onValueChange={v => setEditForm(f => ({ ...f, year: parseInt(v ?? String(f.year)) }))}>
+                  <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>{YEARS.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Měsíc</Label>
+                <Select value={editForm.month} onValueChange={v => setEditForm(f => ({ ...f, month: v ?? f.month }))}>
+                  <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>{MONTHS.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Firma / Klient</Label>
+              <Input value={editForm.client} onChange={e => setEditForm(f => ({ ...f, client: e.target.value }))} className="h-10 text-[15px]" required />
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Typ</Label>
+              <Select value={editForm.type} onValueChange={v => setEditForm(f => ({ ...f, type: v ?? f.type }))}>
+                <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="Příjem">Příjem</SelectItem><SelectItem value="Výdej">Výdej</SelectItem></SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Částka (Kč)</Label>
+              <Input type="number" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} className="h-10 text-[15px]" required />
+            </div>
+            <Button type="submit" className="w-full h-10 text-[15px] font-bold rounded-xl" style={{ background: '#2563eb' }}>Uložit změny</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>

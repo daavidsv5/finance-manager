@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { formatCzk, formatDate } from '@/lib/format';
 import { SummaryCard } from '@/components/widgets/SummaryCard';
-import { GraduationCap, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { GraduationCap, Plus, Trash2, Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,12 +23,14 @@ const TYPE_STYLE: Record<string, string> = {
 };
 
 export default function EducationPage() {
-  const { state, addEducationExpense, deleteEducationExpense } = useStore();
+  const { state, addEducationExpense, deleteEducationExpense, updateEducationExpense } = useStore();
   const [filter, setFilter] = useState('all');
   const [sortKey, setSortKey] = useState('amount');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc');
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', type: 'Kurz' as EduType, paidBy: 'David', amount: '', date: new Date().toISOString().split('T')[0] });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', type: 'Kurz' as EduType, paidBy: '', amount: '', date: '' });
 
   const filtered = useMemo(() => {
     let d = [...state.educationExpenses];
@@ -52,6 +54,18 @@ export default function EducationPage() {
   const SortIcon = ({ k }: { k: string }) => sortKey === k
     ? (sortDir === 'asc' ? <ChevronUp className="h-3.5 w-3.5 ml-1 text-white" /> : <ChevronDown className="h-3.5 w-3.5 ml-1 text-white" />)
     : <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-30 text-white" />;
+
+  const openEdit = (item: { id: string; name: string; type: EduType; paidBy: string; amount: number; date: string }) => {
+    setEditId(item.id);
+    setEditForm({ name: item.name, type: item.type, paidBy: item.paidBy, amount: String(item.amount), date: item.date });
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    updateEducationExpense(editId, { name: editForm.name, type: editForm.type, paidBy: editForm.paidBy, amount: parseInt(editForm.amount), date: editForm.date });
+    setEditId(null);
+  };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,9 +128,14 @@ export default function EducationPage() {
                   <td className="px-6 py-3.5 text-[14px] text-slate-400 tabular-nums">{formatDate(item.date)}</td>
                   <td className="px-6 py-3.5 text-right text-[15px] font-bold tabular-nums text-[#0f1d3a]">{formatCzk(item.amount)}</td>
                   <td className="px-6 py-3.5 text-right">
-                    <button onClick={() => deleteEducationExpense(item.id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                      <button onClick={() => openEdit(item)} className="text-slate-300 hover:text-blue-500 transition-colors">
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => deleteEducationExpense(item.id)} className="text-slate-300 hover:text-red-500 transition-colors">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -131,6 +150,25 @@ export default function EducationPage() {
           </table>
         </div>
       </div>
+
+      <Dialog open={editId !== null} onOpenChange={v => { if (!v) setEditId(null); }}>
+        <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">
+          <DialogHeader><DialogTitle className="text-[18px] font-bold text-[#0f1d3a]">Upravit výdaj</DialogTitle></DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4 pt-2">
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Název</Label><Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Typ</Label>
+              <Select value={editForm.type} onValueChange={v => setEditForm(f => ({ ...f, type: (v ?? f.type) as EduType }))}>
+                <SelectTrigger className="h-10 text-[15px]"><SelectValue /></SelectTrigger>
+                <SelectContent>{EDU_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Kdo platil</Label><Input value={editForm.paidBy} onChange={e => setEditForm(f => ({ ...f, paidBy: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Částka (Kč)</Label><Input type="number" value={editForm.amount} onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            <div className="space-y-2"><Label className="text-[14px] font-semibold text-slate-600">Datum</Label><Input type="date" value={editForm.date} onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))} className="h-10 text-[15px]" required /></div>
+            <Button type="submit" className="w-full h-10 text-[15px] font-bold rounded-xl" style={{ background: '#2563eb' }}>Uložit změny</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm bg-white border-[#dde5f4]">
