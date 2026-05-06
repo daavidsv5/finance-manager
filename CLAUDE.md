@@ -10,7 +10,8 @@
 - **Tables:** @tanstack/react-table v8
 - **Charts:** recharts v3 (BarChart, Cell)
 - **Icons:** lucide-react
-- **State:** React Context API + localStorage (no backend)
+- **State:** React Context API + Neon (serverless PostgreSQL)
+- **Database:** Neon — `@neondatabase/serverless`, env var `DATABASE_URL`
 
 ## Deployment
 - **GitHub:** https://github.com/daavidsv5/finance-manager (branch: `main`)
@@ -54,6 +55,13 @@ Vše v `localStorage` pod klíčem `finance_manager_data` jako `AppState`:
 - `educationExpenses` — id, name, type, paidBy, amount, date
 - `incomes` — id, year, month, client, amount, type ('Příjem'|'Výdej'), invoiceSent?, paid?
 - `investments` — id, year, date, amount, description, type
+
+## Databáze (Neon)
+- Tabulky: `monthly_expenses`, `education_expenses`, `incomes`, `investments`, `children_investments`
+- Init + seed: `src/lib/setupDB.ts` — spustí se automaticky při prvním GET /api/data
+- API routes: `src/app/api/[entity]/route.ts` (POST) + `src/app/api/[entity]/[id]/route.ts` (PUT, DELETE)
+- Store: optimistic update (UI okamžitě) + fire-and-forget API volání
+- Vercel: přidat `DATABASE_URL` v Project Settings → Environment Variables
 
 ## Store API (`useStore()`)
 - `addMonthlyExpense / addEducationExpense / addIncome / addInvestment`
