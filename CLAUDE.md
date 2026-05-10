@@ -61,14 +61,16 @@ Vše v `localStorage` pod klíčem `finance_manager_data` jako `AppState`:
 - Tabulky: `monthly_expenses`, `education_expenses`, `incomes`, `investments`, `children_investments`
 - Init + seed: `src/lib/setupDB.ts` — spustí se automaticky při prvním GET /api/data
 - API routes: `src/app/api/[entity]/route.ts` (POST) + `src/app/api/[entity]/[id]/route.ts` (PUT, DELETE)
-- Store: optimistic update (UI okamžitě) + fire-and-forget API volání
+- Store: optimistic update (UI okamžitě) + API volání s refetch po dokončení (zajišťuje konzistenci s DB)
 - Vercel: přidat `DATABASE_URL` v Project Settings → Environment Variables
 
 ## Store API (`useStore()`)
-- `addMonthlyExpense / addEducationExpense / addIncome / addInvestment`
-- `deleteMonthlyExpense / deleteEducationExpense / deleteIncome / deleteInvestment`
+- `addMonthlyExpense / addEducationExpense / addIncome / addInvestment / addChildInvestment`
+- `deleteMonthlyExpense / deleteEducationExpense / deleteIncome / deleteInvestment / deleteChildInvestment`
 - `updateMonthlyExpense(id, Partial<MonthlyExpense>)` — pro editaci existující položky
-- `updateIncome(id, Partial<Income>)` — pro toggle invoiceSent / paid
+- `updateEducationExpense / updateInvestment / updateChildInvestment` — editace příslušné sekce
+- `updateIncome(id, Partial<Income>)` — pro toggle invoiceSent / paid i editaci
+- Každá mutace: optimistický update → API volání → `refetch()` z DB (chyby loguje do console)
 
 ## Income page — klíčové detaily
 - **Roční graf** (nahoře) — čistý příjem per rok, klik na sloupec filtruje měsíční graf + KPI; barva tmavě zelená (`#16a34a`), vybraný rok `#14532d`
