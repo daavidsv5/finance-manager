@@ -116,7 +116,12 @@ export default function IncomePage() {
       let av: string|number = sortKey === 'month' ? monthIdx(a.month) : (a as unknown as Record<string,unknown>)[sortKey] as string|number;
       let bv: string|number = sortKey === 'month' ? monthIdx(b.month) : (b as unknown as Record<string,unknown>)[sortKey] as string|number;
       if (typeof av === 'string') { av = av.toLowerCase(); bv = (bv as string).toLowerCase(); }
-      return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+      const cmp = sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+      if (cmp === 0 && sortKey === 'year') {
+        const ma = monthIdx(a.month), mb = monthIdx(b.month);
+        return sortDir === 'asc' ? (ma > mb ? 1 : -1) : (ma < mb ? 1 : -1);
+      }
+      return cmp;
     });
     return d;
   }, [state.incomes, fYear, fMonth, fClient, fType, sortKey, sortDir]);
