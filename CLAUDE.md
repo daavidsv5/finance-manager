@@ -79,6 +79,7 @@ Vše v `localStorage` pod klíčem `finance_manager_data` jako `AppState`:
 - **Čistý příjem** = příjmy (type='Příjem') − daně (type='Výdej')
 - **Faktura poslána / Zaplaceno** — klikatelné checkboxy přímo v tabulce (volají `updateIncome`)
 - Výdeje typu 'Výdej' nemají checkbox pro fakturu/zaplacení (zobrazí se `—`)
+- **Výchozí řazení tabulky:** rok DESC + měsíc DESC (nejnovější nahoře); sekundární sort podle měsíce se aplikuje automaticky při `sortKey === 'year'`
 
 ## David investice — klíčové detaily
 - Přejmenováno z "Investice" → "David investice" (sidebar + nadpis stránky)
